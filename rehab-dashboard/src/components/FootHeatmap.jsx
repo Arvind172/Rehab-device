@@ -1,0 +1,182 @@
+import { useId, useMemo } from "react";
+
+const defaultPressure = {
+  heel: 0,
+  midfoot: 0,
+  forefoot: 0,
+  heel_load: 0,
+  mid_load: 0,
+  toe_load: 0,
+  fsr1: 0,
+  fsr2: 0,
+  fsr3: 0,
+};
+
+const FOOT_PATH =
+  "M 159.500 22.905 C 155.122 24.942, 148.483 31.506, 145.245 37 C 140.713 44.687, 138.500 54.709, 138.507 67.500 C 138.515 81.013, 139.761 87.272, 144.479 97.500 C 159.376 129.799, 191.308 124.341, 200.057 88 C 201.901 80.342, 201.676 63.039, 199.623 54.565 C 196.129 40.142, 187.306 27.296, 178 23.082 C 172.348 20.522, 164.777 20.450, 159.500 22.905 M 162.294 34.904 C 158.061 37.562, 153.414 45.885, 151.524 54.193 C 146.211 77.555, 156.052 105.124, 170.277 106.728 C 174.326 107.184, 175.108 106.897, 178.728 103.627 C 193.913 89.908, 193.022 51.708, 177.165 36.636 C 173.141 32.810, 166.803 32.072, 162.294 34.904 M 227.459 34.880 C 213.018 41.439, 206.864 68.595, 215.720 86.680 C 222.703 100.943, 235.815 103.682, 246.131 93.034 C 253.217 85.719, 255.401 79.150, 255.448 65 C 255.481 55.106, 255.169 52.810, 253.213 48.555 C 249.975 41.511, 246.474 37.282, 241.982 34.991 C 237.152 32.527, 232.714 32.493, 227.459 34.880 M 231.849 45.520 C 226.655 48.342, 222.330 61.894, 223.558 71.500 C 224.425 78.281, 227.261 84.470, 230.464 86.568 C 233.001 88.231, 233.230 88.221, 235.807 86.351 C 237.288 85.276, 239.625 82.169, 241 79.448 C 243.170 75.153, 243.500 73.181, 243.500 64.500 C 243.500 56.040, 243.153 53.851, 241.247 50.283 C 240.007 47.964, 238.125 45.602, 237.062 45.033 C 234.737 43.789, 235.099 43.755, 231.849 45.520 M 276.290 49.086 C 264.062 55.138, 254.917 75.649, 257.944 90.232 C 261.861 109.099, 279.059 112.689, 291.643 97.265 C 297.521 90.061, 300.212 82.428, 300.727 71.500 C 301.120 63.153, 300.946 62.101, 298.326 57 C 293.567 47.738, 285.132 44.709, 276.290 49.086 M 277.441 63.400 C 270.147 71.013, 267.003 85.531, 271.022 93.040 C 272.678 96.135, 277.089 95.546, 280.696 91.750 C 285.877 86.298, 288.287 80.361, 288.714 72 C 289.392 58.717, 285.080 55.427, 277.441 63.400 M 317.239 68.527 C 307.021 73.699, 299.882 85.984, 299.239 99.500 C 298.913 106.370, 299.187 108.135, 301.179 111.992 C 309.218 127.553, 328.238 122.013, 337.695 101.356 C 341.512 93.018, 342.092 81.888, 339.038 75.579 C 334.649 66.511, 326.457 63.861, 317.239 68.527 M 318.465 82.375 C 313.617 87.434, 311 94.132, 311 101.478 C 311 110.268, 314.987 111.459, 321.535 104.625 C 326.222 99.733, 329 92.898, 329 86.256 C 329 76.965, 325.045 75.508, 318.465 82.375 M 351.513 99.068 C 342.097 103.765, 334.256 115.664, 333.342 126.644 C 332.942 131.447, 333.272 133.298, 335.177 136.942 C 341.451 148.941, 356.676 146.677, 367.040 132.204 C 373.821 122.734, 375.603 113.128, 372.036 105.271 C 368.494 97.467, 359.919 94.876, 351.513 99.068 M 353.128 112.503 C 348.296 116.869, 345 123.293, 345 128.347 C 345 132.805, 346.664 133.742, 350.791 131.608 C 356.830 128.485, 362.534 118.558, 361.830 112.395 C 361.334 108.043, 358.020 108.084, 353.128 112.503 M 218.500 116.074 C 196.462 119.108, 175.571 128.140, 162.086 140.466 C 143.827 157.154, 138.424 181.564, 148.354 202.500 C 152.432 211.097, 158.653 217.998, 174.409 231.403 C 196.565 250.253, 202.939 262.386, 202.983 285.792 C 203.023 307.382, 195.965 326.923, 174.040 365.929 C 152.011 405.119, 147.867 418.086, 151.168 437.494 C 156.682 469.903, 184.925 492.611, 217.381 490.730 C 233.835 489.777, 247.292 483.696, 259.023 471.914 C 273.369 457.504, 278.051 442.178, 280.014 403.200 C 281.258 378.502, 282.286 369.431, 285.644 353.517 C 291.259 326.907, 298.188 310.797, 319.102 275.727 C 333.371 251.800, 341.024 236.473, 344.181 225.500 C 346.077 218.910, 346.472 215.209, 346.422 204.500 C 346.369 193.206, 346.012 190.450, 343.705 183.500 C 333.357 152.324, 302.929 127.116, 265.096 118.378 C 252.966 115.577, 230.266 114.454, 218.500 116.074 M 218.665 128.097 C 173.051 134.763, 146.465 164.228, 158.048 195.280 C 160.746 202.515, 166.391 209.191, 178.207 219.127 C 205.763 242.296, 213.477 255.586, 214.701 282 C 215.874 307.298, 209.198 327.099, 184.538 371.458 C 164.841 406.889, 161.271 416.484, 162.352 431.097 C 163.336 444.405, 169.045 456.123, 179.185 465.648 C 200.934 486.079, 236.803 482.717, 255.059 458.538 C 263.547 447.295, 266.470 434.774, 268.024 403 C 269.188 379.199, 271 363.907, 274.481 348.500 C 280.588 321.471, 287.836 304.862, 308.954 269.500 C 320.206 250.659, 330.352 231.040, 331.579 225.750 C 332.134 223.358, 331.910 222.991, 329.858 222.930 C 323.693 222.746, 323.590 221.555, 329.406 217.694 L 335 213.980 334.985 205.740 C 334.959 191.021, 330.499 178.514, 320.566 165.300 C 302.692 141.522, 269.327 126.724, 234.500 127.128 C 229 127.192, 221.874 127.628, 218.665 128.097";
+
+function clampPressure(value) {
+  const number = Number(value);
+  if (!Number.isFinite(number)) return 0;
+  return Math.max(0, Math.min(100, number));
+}
+
+function clampRawPressure(value) {
+  const number = Number(value);
+  if (!Number.isFinite(number)) return 0;
+  return Math.max(0, Math.min(4095, number));
+}
+
+function normalize(value) {
+  return clampPressure(value) / 100;
+}
+
+function getHeatColor(value) {
+  const v = normalize(value);
+
+  if (v < 0.2) return "#2563eb";
+  if (v < 0.45) return "#22c55e";
+  if (v < 0.75) return "#facc15";
+  return "#ef4444";
+}
+
+function getOpacity(value) {
+  return 0.15 + normalize(value) * 0.85;
+}
+
+function getCenterOfPressure(pressure) {
+  const heel = clampPressure(pressure.heel);
+  const midfoot = clampPressure(pressure.midfoot);
+  const forefoot = clampPressure(pressure.forefoot);
+  const total = heel + midfoot + forefoot;
+
+  if (total <= 0) {
+    return {
+      visible: false,
+      x: 245,
+      y: 295,
+    };
+  }
+
+  const y = (heel * 420 + midfoot * 300 + forefoot * 175) / total;
+  const x = 245 + (forefoot - heel) * 0.08;
+
+  return {
+    visible: true,
+    x,
+    y,
+  };
+}
+
+export default function FootHeatmap({ pressure = defaultPressure, connected = false }) {
+  const id = useId().replace(/:/g, "");
+  const values = useMemo(
+    () => ({
+      heel: clampPressure(pressure.heel ?? pressure.heel_load),
+      midfoot: clampPressure(pressure.midfoot ?? pressure.mid ?? pressure.mid_load),
+      forefoot: clampPressure(pressure.forefoot ?? pressure.toe ?? pressure.toe_load),
+      fsr1: clampRawPressure(pressure.fsr1),
+      fsr2: clampRawPressure(pressure.fsr2),
+      fsr3: clampRawPressure(pressure.fsr3),
+    }),
+    [
+      pressure.forefoot,
+      pressure.fsr1,
+      pressure.fsr2,
+      pressure.fsr3,
+      pressure.heel,
+      pressure.heel_load,
+      pressure.mid,
+      pressure.mid_load,
+      pressure.midfoot,
+      pressure.toe,
+      pressure.toe_load,
+    ],
+  );
+  const centerOfPressure = useMemo(() => getCenterOfPressure(values), [values]);
+  const clipId = `foot-clip-${id}`;
+  const maskId = `toe-mask-${id}`;
+
+  return (
+    <div className="pressure-card" aria-label="Foot pressure heatmap">
+      <div className="panel-header">
+        <div>
+          <p className="eyebrow">Pressure Map</p>
+          <h2>Plantar Load</h2>
+        </div>
+        <span className={`status-pill ${connected ? "online" : "offline"}`}>
+          {connected ? "Live" : "Neutral"}
+        </span>
+      </div>
+
+      <svg className="foot-heatmap" viewBox="0 0 512 512" role="img">
+        <title>Live plantar pressure heatmap</title>
+        <defs>
+          <clipPath id={clipId}>
+            <path d={FOOT_PATH} />
+          </clipPath>
+
+          <mask id={maskId}>
+            <rect width="512" height="512" fill="white" />
+            <rect x="0" y="0" width="512" height="132" fill="black" />
+          </mask>
+
+          <radialGradient id={`forefoot-grad-${id}`} cx="48%" cy="35%" r="24%">
+            <stop
+              offset="0%"
+              stopColor={getHeatColor(values.forefoot)}
+              stopOpacity={getOpacity(values.forefoot)}
+            />
+            <stop offset="100%" stopColor={getHeatColor(values.forefoot)} stopOpacity="0" />
+          </radialGradient>
+
+          <radialGradient id={`midfoot-grad-${id}`} cx="48%" cy="60%" r="25%">
+            <stop
+              offset="0%"
+              stopColor={getHeatColor(values.midfoot)}
+              stopOpacity={getOpacity(values.midfoot)}
+            />
+            <stop offset="100%" stopColor={getHeatColor(values.midfoot)} stopOpacity="0" />
+          </radialGradient>
+
+          <radialGradient id={`heel-grad-${id}`} cx="48%" cy="84%" r="24%">
+            <stop
+              offset="0%"
+              stopColor={getHeatColor(values.heel)}
+              stopOpacity={getOpacity(values.heel)}
+            />
+            <stop offset="100%" stopColor={getHeatColor(values.heel)} stopOpacity="0" />
+          </radialGradient>
+
+          <filter id={`heat-blur-${id}`} x="-20%" y="-20%" width="140%" height="140%">
+            <feGaussianBlur stdDeviation="9" />
+          </filter>
+        </defs>
+
+        <path className="foot-outline" d={FOOT_PATH} />
+
+        <g clipPath={`url(#${clipId})`} mask={`url(#${maskId})`} filter={`url(#heat-blur-${id})`}>
+          <rect width="512" height="512" fill={`url(#forefoot-grad-${id})`} />
+          <rect width="512" height="512" fill={`url(#midfoot-grad-${id})`} />
+          <rect width="512" height="512" fill={`url(#heel-grad-${id})`} />
+        </g>
+
+        <rect className="toe-mask-band" x="0" y="0" width="512" height="132" />
+        <path className="foot-border" d={FOOT_PATH} />
+
+        {centerOfPressure.visible && (
+          <g className="cop-marker">
+            <circle cx={centerOfPressure.x} cy={centerOfPressure.y} r="13" />
+            <circle cx={centerOfPressure.x} cy={centerOfPressure.y} r="4" />
+          </g>
+        )}
+      </svg>
+
+      <div className="pressure-readings">
+        <span>Heel {Math.round(values.heel)}%</span>
+        <span>Mid {Math.round(values.midfoot)}%</span>
+        <span>Toe {Math.round(values.forefoot)}%</span>
+      </div>
+    </div>
+  );
+}
